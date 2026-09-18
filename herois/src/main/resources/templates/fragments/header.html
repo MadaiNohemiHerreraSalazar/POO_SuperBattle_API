@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<body>
+ 
+<!-- th:fragment="menu" -> esse pedaco pode ser chamado de qualquer pagina
+     com <div th:replace="~{fragments/header :: menu}"></div> -->
+<nav class="menu" th:fragment="menu">
+ 
+    <a class="menu__marca" th:href="@{/herois}">Super Battle</a>
+ 
+    <ul class="menu__links">
+        <li><a class="menu__link" th:href="@{/herois/buscar}">Buscar</a></li>
+        <li><a class="menu__link" th:href="@{/herois}">Meu elenco</a></li>
+        <li><a class="menu__link" th:href="@{/herois/luta}">Duelo</a></li>
+    </ul>
+ 
+</nav>
+ 
+</body>
+</html>
+ 

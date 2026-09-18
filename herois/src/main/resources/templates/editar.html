@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar heroi</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: menu}"></div>
+
+<main class="pagina">
+
+    <h1>Editar heroi</h1>
+
+    <!-- th:object="${heroi}" liga o formulario inteiro ao objeto Heroi vindo do controller.
+         Dentro dele, *{campo} e um atalho pra ${heroi.campo}. -->
+    <form th:action="@{/herois/atualizar}" th:object="${heroi}" method="post">
+
+        <!-- O id viaja escondido pro controller saber QUAL heroi atualizar -->
+        <input type="hidden" th:field="*{id}">
+
+        <div class="painel">
+            <p class="painel__titulo">Identidade</p>
+            <div class="campos">
+                <div class="campo">
+                    <label for="nome">Nome</label>
+                    <input id="nome" type="text" th:field="*{nome}" required>
+                </div>
+                <div class="campo">
+                    <label for="publisher">Editora</label>
+                    <input id="publisher" type="text" th:field="*{publisher}">
+                </div>
+                <div class="campo">
+                    <label for="alinhamento">Lado</label>
+                    <select id="alinhamento" th:field="*{alinhamento}">
+                        <option value="good">Heroi</option>
+                        <option value="bad">Vilao</option>
+                        <option value="neutral">Neutro</option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="imagemUrl">Endereco da imagem</label>
+                    <input id="imagemUrl" type="url" th:field="*{imagemUrl}">
+                </div>
+            </div>
+        </div>
+
+        <div class="painel">
+            <p class="painel__titulo">Poderes (0 a 100)</p>
+            <div class="campos">
+                <div class="campo">
+                    <label for="inteligencia">Inteligencia</label>
+                    <input id="inteligencia" type="number" min="0" max="100" th:field="*{inteligencia}">
+                </div>
+                <div class="campo">
+                    <label for="forca">Forca</label>
+                    <input id="forca" type="number" min="0" max="100" th:field="*{forca}">
+                </div>
+                <div class="campo">
+                    <label for="velocidade">Velocidade</label>
+                    <input id="velocidade" type="number" min="0" max="100" th:field="*{velocidade}">
+                </div>
+                <div class="campo">
+                    <label for="durabilidade">Durabilidade</label>
+                    <input id="durabilidade" type="number" min="0" max="100" th:field="*{durabilidade}">
+                </div>
+                <div class="campo">
+                    <label for="poder">Poder</label>
+                    <input id="poder" type="number" min="0" max="100" th:field="*{poder}">
+                </div>
+                <div class="campo">
+                    <label for="combate">Combate</label>
+                    <input id="combate" type="number" min="0" max="100" th:field="*{combate}">
+                </div>
+            </div>
+        </div>
+
+        <button class="botao botao--amarelo" type="submit">Salvar alteracoes</button>
+        <a class="botao botao--branco" th:href="@{/herois}">Voltar ao elenco</a>
+
+    </form>
+
+</main>
+
+</body>
+</html>

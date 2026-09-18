@@ -4,58 +4,104 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Heroi</title>
+
+    <!-- Fontes do Google: Bangers faz o letreiro de gibi, Archivo e o texto corrido -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
+          rel="stylesheet">
+
     <link rel="stylesheet" th:href="@{/css/estilo.css}">
 </head>
-    <!-- Inclui o menu de navegacao (feito pela Pessoa B) -->
-    <div th:replace="~{fragments/header :: menu}"></div>
+<body>
+
+<!-- Inclui o menu de navegacao (feito pela Pessoa B) -->
+<div th:replace="~{fragments/header :: menu}"></div>
+
+<main class="pagina">
 
     <h1>Buscar Super-heroi</h1>
 
     <!-- Formulario de busca: metodo GET manda o "nome" na propria URL (?nome=batman) -->
-    <form th:action="@{/herois/buscar}" method="get">
+    <form class="busca" th:action="@{/herois/buscar}" method="get">
         <!-- th:value mantem o texto digitado, mesmo depois de recarregar a pagina -->
-        <input type="text" name="nome" th:value="${nome}" placeholder="Digite o nome do heroi..." required>
-        <button type="submit">Buscar</button>
+        <input class="busca__campo" type="text" name="nome" th:value="${nome}"
+               placeholder="Digite o nome do heroi..." required>
+        <button class="botao botao--rosa" type="submit">Buscar</button>
     </form>
 
+    <!-- Primeira visita: ainda nao houve busca nenhuma -->
+    <div class="balao" th:if="${nome == null or nome.isBlank()}">
+        <strong>Comece por aqui</strong>
+        Digite o nome de um heroi para ver os poderes dele e adicionar ao seu elenco.
+    </div>
+
     <!-- Mostra essa mensagem SOMENTE se ja foi feita uma busca e ela nao trouxe nenhum resultado -->
-    <div th:if="${resultados != null and #lists.isEmpty(resultados)}">
-        <p>Nenhum heroi encontrado com esse nome.</p>
+    <div class="balao" th:if="${resultados != null and #lists.isEmpty(resultados) and nome != null and !nome.isBlank()}">
+        <strong>Nenhum heroi com esse nome</strong>
+        Confira a grafia ou tente so parte do nome, como "man" ou "spider".
     </div>
 
     <div class="cards">
         <!-- th:each repete esse bloco de <div class="card"> para CADA heroi da lista "resultados" -->
         <div class="card" th:each="h : ${resultados}">
+
+            <!-- Selo de alinhamento: muda de cor conforme o heroi seja bom ou mau -->
+            <span class="selo"
+                  th:classappend="${h.biography.alignment == 'bad'} ? 'selo--vilao' : 'selo--bom'"
+                  th:text="${h.biography.alignment == 'bad'} ? 'Vilao' : 'Heroi'">Heroi</span>
+
             <!-- th:src / th:text / th:alt pegam o valor direto do objeto HeroApiDTO (variavel "h") -->
-            <img th:src="${h.images.md}" alt="" th:alt="${h.name}">
-            <h2 th:text="${h.name}">Nome</h2>
-            <p th:text="${h.biography.publisher}">Publisher</p>
-            <ul>
-                <li>Inteligencia: <span th:text="${h.powerstats.intelligence}"></span></li>
-                <li>Forca: <span th:text="${h.powerstats.strength}"></span></li>
-                <li>Velocidade: <span th:text="${h.powerstats.speed}"></span></li>
-                <li>Durabilidade: <span th:text="${h.powerstats.durability}"></span></li>
-                <li>Poder: <span th:text="${h.powerstats.power}"></span></li>
-                <li>Combate: <span th:text="${h.powerstats.combat}"></span></li>
+            <img class="card__foto" th:src="${h.images.md}" alt="" th:alt="${h.name}">
+
+            <h2 class="card__nome" th:text="${h.name}">Nome</h2>
+            <p class="card__editora" th:text="${h.biography.publisher}">Publisher</p>
+
+            <!-- Cada <li> carrega o valor da stat em uma variavel CSS (--valor).
+                 O CSS usa esse numero pra desenhar a barra preenchida. -->
+            <ul class="stats">
+                <li th:style="'--valor:' + ${h.powerstats.intelligence}">
+                    Inteligencia <span class="stats__valor" th:text="${h.powerstats.intelligence}"></span>
+                </li>
+                <li th:style="'--valor:' + ${h.powerstats.strength}">
+                    Forca <span class="stats__valor" th:text="${h.powerstats.strength}"></span>
+                </li>
+                <li th:style="'--valor:' + ${h.powerstats.speed}">
+                    Velocidade <span class="stats__valor" th:text="${h.powerstats.speed}"></span>
+                </li>
+                <li th:style="'--valor:' + ${h.powerstats.durability}">
+                    Durabilidade <span class="stats__valor" th:text="${h.powerstats.durability}"></span>
+                </li>
+                <li th:style="'--valor:' + ${h.powerstats.power}">
+                    Poder <span class="stats__valor" th:text="${h.powerstats.power}"></span>
+                </li>
+                <li th:style="'--valor:' + ${h.powerstats.combat}">
+                    Combate <span class="stats__valor" th:text="${h.powerstats.combat}"></span>
+                </li>
             </ul>
 
             <!-- Formulario ESCONDIDO (so tem inputs "hidden") que manda TODOS os dados
                  do heroi pro metodo salvar() do BuscaController quando o botao e clicado -->
             <form th:action="@{/herois/salvar}" method="post">
-                <input type="hidden" name="apiId" th:value="${h.id}">
-                <input type="hidden" name="nome" th:value="${h.name}">
-                <input type="hidden" name="imagemUrl" th:value="${h.images.md}">
-                <input type="hidden" name="publisher" th:value="${h.biography.publisher}">
-                <input type="hidden" name="alinhamento" th:value="${h.biography.alignment}">
+                <input type="hidden" name="apiId"        th:value="${h.id}">
+                <input type="hidden" name="nome"         th:value="${h.name}">
+                <input type="hidden" name="imagemUrl"    th:value="${h.images.md}">
+                <input type="hidden" name="publisher"    th:value="${h.biography.publisher}">
+                <input type="hidden" name="alinhamento"  th:value="${h.biography.alignment}">
                 <input type="hidden" name="inteligencia" th:value="${h.powerstats.intelligence}">
-                <input type="hidden" name="forca" th:value="${h.powerstats.strength}">
-                <input type="hidden" name="velocidade" th:value="${h.powerstats.speed}">
+                <input type="hidden" name="forca"        th:value="${h.powerstats.strength}">
+                <input type="hidden" name="velocidade"   th:value="${h.powerstats.speed}">
                 <input type="hidden" name="durabilidade" th:value="${h.powerstats.durability}">
-                <input type="hidden" name="poder" th:value="${h.powerstats.power}">
-                <input type="hidden" name="combate" th:value="${h.powerstats.combat}">
-                <button type="submit">Salvar</button>
+                <input type="hidden" name="poder"        th:value="${h.powerstats.power}">
+                <input type="hidden" name="combate"      th:value="${h.powerstats.combat}">
+
+                <button class="botao botao--azul botao--pequeno" type="submit">Adicionar ao elenco</button>
             </form>
+
         </div>
     </div>
+
+</main>
+
 </body>
 </html>

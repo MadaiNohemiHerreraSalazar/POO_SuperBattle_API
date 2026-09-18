@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Duelo</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: menu}"></div>
+
+<main class="pagina">
+
+    <h1>Duelo de poderes</h1>
+
+    <!-- Precisa de pelo menos dois herois salvos pra ter duelo -->
+    <div class="balao" th:if="${herois == null or #lists.size(herois) < 2}">
+        <strong>Faltam lutadores</strong>
+        Adicione pelo menos dois herois ao elenco para montar um duelo.
+    </div>
+
+    <!-- Escolha dos dois lutadores. Os <select> mandam os ids pro controller,
+         que busca os dois no banco e devolve heroi1, heroi2 e vencedor. -->
+    <form th:action="@{/herois/luta}" method="get"
+          th:unless="${herois == null or #lists.size(herois) < 2}">
+        <div class="painel">
+            <p class="painel__titulo">Escolha os dois lutadores</p>
+            <div class="campos">
+                <div class="campo">
+                    <label for="id1">Canto rosa</label>
+                    <select id="id1" name="id1" required>
+                        <option value="">Escolher heroi</option>
+                        <option th:each="h : ${herois}"
+                                th:value="${h.id}"
+                                th:text="${h.nome}"
+                                th:selected="${heroi1 != null and heroi1.id == h.id}"></option>
+                    </select>
+                </div>
+                <div class="campo">
+                    <label for="id2">Canto azul</label>
+                    <select id="id2" name="id2" required>
+                        <option value="">Escolher heroi</option>
+                        <option th:each="h : ${herois}"
+                                th:value="${h.id}"
+                                th:text="${h.nome}"
+                                th:selected="${heroi2 != null and heroi2.id == h.id}"></option>
+                    </select>
+                </div>
+                <div class="campo campo--acao">
+                    <button class="botao botao--amarelo" type="submit">Lutar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <!-- Daqui pra baixo, tudo so aparece quando os dois herois ja foram escolhidos -->
+    <div th:if="${heroi1 != null and heroi2 != null}">
+
+        <!-- A arena: os dois lutadores frente a frente com a estrela de VS no meio -->
+        <div class="arena">
+            <div class="lutador lutador--a">
+                <img class="lutador__foto" th:src="${heroi1.imagemUrl}" alt="" th:alt="${heroi1.nome}">
+                <p class="lutador__nome" th:text="${heroi1.nome}">Heroi 1</p>
+            </div>
+
+            <div class="vs">VS</div>
+
+            <div class="lutador lutador--b">
+                <img class="lutador__foto" th:src="${heroi2.imagemUrl}" alt="" th:alt="${heroi2.nome}">
+                <p class="lutador__nome" th:text="${heroi2.nome}">Heroi 2</p>
+            </div>
+        </div>
+
+        <!-- Faixa do vencedor. O controller manda o objeto "vencedor";
+             se os dois empatarem, ele pode vir nulo e mostramos o empate. -->
+        <div class="vencedor">
+            <p class="vencedor__grito" th:if="${vencedor != null}">Kapow!</p>
+            <p class="vencedor__nome" th:if="${vencedor != null}"
+               th:text="${vencedor.nome} + ' vence o duelo'">Vencedor</p>
+
+            <p class="vencedor__grito" th:if="${vencedor == null}">Empate!</p>
+            <p class="vencedor__nome" th:if="${vencedor == null}">Ninguem levou vantagem</p>
+        </div>
+
+        <!-- Placar atributo por atributo.
+             A classe "venceu" pinta de amarelo a celula do lado que ganhou aquela linha. -->
+        <div class="rolagem">
+            <table class="placar">
+                <thead>
+                    <tr>
+                        <th th:text="${heroi1.nome}">Heroi 1</th>
+                        <th>Atributo</th>
+                        <th th:text="${heroi2.nome}">Heroi 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td th:text="${heroi1.inteligencia}"
+                            th:classappend="${heroi1.inteligencia > heroi2.inteligencia} ? 'venceu'">0</td>
+                        <td>Inteligencia</td>
+                        <td th:text="${heroi2.inteligencia}"
+                            th:classappend="${heroi2.inteligencia > heroi1.inteligencia} ? 'venceu'">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${heroi1.forca}"
+                            th:classappend="${heroi1.forca > heroi2.forca} ? 'venceu'">0</td>
+                        <td>Forca</td>
+                        <td th:text="${heroi2.forca}"
+                            th:classappend="${heroi2.forca > heroi1.forca} ? 'venceu'">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${heroi1.velocidade}"
+                            th:classappend="${heroi1.velocidade > heroi2.velocidade} ? 'venceu'">0</td>
+                        <td>Velocidade</td>
+                        <td th:text="${heroi2.velocidade}"
+                            th:classappend="${heroi2.velocidade > heroi1.velocidade} ? 'venceu'">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${heroi1.durabilidade}"
+                            th:classappend="${heroi1.durabilidade > heroi2.durabilidade} ? 'venceu'">0</td>
+                        <td>Durabilidade</td>
+                        <td th:text="${heroi2.durabilidade}"
+                            th:classappend="${heroi2.durabilidade > heroi1.durabilidade} ? 'venceu'">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${heroi1.poder}"
+                            th:classappend="${heroi1.poder > heroi2.poder} ? 'venceu'">0</td>
+                        <td>Poder</td>
+                        <td th:text="${heroi2.poder}"
+                            th:classappend="${heroi2.poder > heroi1.poder} ? 'venceu'">0</td>
+                    </tr>
+                    <tr>
+                        <td th:text="${heroi1.combate}"
+                            th:classappend="${heroi1.combate > heroi2.combate} ? 'venceu'">0</td>
+                        <td>Combate</td>
+                        <td th:text="${heroi2.combate}"
+                            th:classappend="${heroi2.combate > heroi1.combate} ? 'venceu'">0</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</main>
+
+</body>
+</html>

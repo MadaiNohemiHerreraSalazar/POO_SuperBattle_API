@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meu elenco</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
+          rel="stylesheet">
+
+    <link rel="stylesheet" th:href="@{/css/estilo.css}">
+</head>
+<body>
+
+<div th:replace="~{fragments/header :: menu}"></div>
+
+<main class="pagina">
+
+    <h1>Meu elenco</h1>
+
+    <!-- Elenco vazio: em vez de uma tabela sem linhas, um convite pra buscar -->
+    <div class="balao" th:if="${#lists.isEmpty(herois)}">
+        <strong>Seu elenco esta vazio</strong>
+        Busque um heroi e clique em "Adicionar ao elenco" pra ele aparecer aqui.
+    </div>
+
+    <!-- A div .rolagem faz a tabela deslizar de lado no celular em vez de espremer -->
+    <div class="rolagem" th:unless="${#lists.isEmpty(herois)}">
+        <table class="tabela">
+            <thead>
+                <tr>
+                    <th>Foto</th>
+                    <th>Nome</th>
+                    <th>Editora</th>
+                    <th>Lado</th>
+                    <th>Forca</th>
+                    <th>Poder</th>
+                    <th>Combate</th>
+                    <th>Acoes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Uma linha pra cada heroi salvo no banco -->
+                <tr th:each="h : ${herois}">
+                    <td><img class="tabela__miniatura" th:src="${h.imagemUrl}" alt="" th:alt="${h.nome}"></td>
+                    <td th:text="${h.nome}">Nome</td>
+                    <td th:text="${h.publisher}">Editora</td>
+                    <td th:text="${h.alinhamento == 'bad'} ? 'Vilao' : 'Heroi'">Lado</td>
+                    <td th:text="${h.forca}">0</td>
+                    <td th:text="${h.poder}">0</td>
+                    <td th:text="${h.combate}">0</td>
+                    <td>
+                        <div class="tabela__acoes">
+                            <a class="botao botao--amarelo botao--pequeno"
+                               th:href="@{/herois/editar/{id}(id=${h.id})}">Editar</a>
+
+                            <!-- Excluir e POST porque muda dados no banco.
+                                 O onclick pede confirmacao antes de apagar de vez. -->
+                            <form th:action="@{/herois/deletar/{id}(id=${h.id})}" method="post"
+                                  onsubmit="return confirm('Remover esse heroi do elenco?');">
+                                <button class="botao botao--rosa botao--pequeno" type="submit">Excluir</button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+</main>
+
+</body>
+</html>
