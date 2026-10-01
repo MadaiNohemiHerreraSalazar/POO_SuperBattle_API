@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Editar heroi</title>
 
+    <!-- mesmas fontes das outras paginas -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
@@ -20,13 +21,15 @@
 
     <h1>Editar heroi</h1>
 
-    <!-- th:object="${heroi}" liga o formulario inteiro ao objeto Heroi vindo do controller.
-         Dentro dele, *{campo} e um atalho pra ${heroi.campo}. -->
+    <!-- O th:object liga o form inteiro ao heroi que o controller mandou.
+         Por isso, dentro dele, *{nome} e o mesmo que ${heroi.nome}.
+         O th:field ja preenche o campo com o valor atual e cuida do name/id -->
     <form th:action="@{/herois/atualizar}" th:object="${heroi}" method="post">
 
-        <!-- O id viaja escondido pro controller saber QUAL heroi atualizar -->
+        <!-- o id vai escondido pro controller saber qual heroi do banco atualizar -->
         <input type="hidden" th:field="*{id}">
 
+        <!-- parte 1: dados de identificacao -->
         <div class="painel">
             <p class="painel__titulo">Identidade</p>
             <div class="campos">
@@ -40,6 +43,8 @@
                 </div>
                 <div class="campo">
                     <label for="alinhamento">Lado</label>
+                    <!-- os values sao os mesmos que a API usa (good/bad/neutral),
+                         so o texto que aparece e em portugues -->
                     <select id="alinhamento" th:field="*{alinhamento}">
                         <option value="good">Heroi</option>
                         <option value="bad">Vilao</option>
@@ -53,6 +58,7 @@
             </div>
         </div>
 
+        <!-- parte 2: os poderes. O min e o max do navegador seguram os numeros entre 0 e 100 -->
         <div class="painel">
             <p class="painel__titulo">Poderes (0 a 100)</p>
             <div class="campos">
@@ -84,6 +90,7 @@
         </div>
 
         <button class="botao botao--amarelo" type="submit">Salvar alteracoes</button>
+        <!-- o voltar e um link normal, nao mexe em nada no banco -->
         <a class="botao botao--branco" th:href="@{/herois}">Voltar ao elenco</a>
 
     </form>

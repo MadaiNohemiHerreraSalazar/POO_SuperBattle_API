@@ -3,7 +3,7 @@ package com.projeto.herois.repository;
 import com.projeto.herois.model.Heroi;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-// Interface responsavel por toda a comunicacao com o banco de dados para a entidade Heroi.
+// responsavel por toda a comunicacao com o banco de dados para a entidade Heroi.
 // JpaRepository<Heroi, Long> significa: "entidade Heroi, cujo ID e do tipo Long"
 
 // A interface traz:
@@ -14,4 +14,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 // - count()               -> conta quantos herois existem
 
 public interface HeroiRepository extends JpaRepository<Heroi, Long> {
+    // Vazia de proposito pq por enquanto os metodos prontos do JpaRepository bastam
 }

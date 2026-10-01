@@ -5,60 +5,62 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Buscar Heroi</title>
 
-    <!-- Fontes do Google: Bangers faz o letreiro de gibi, Archivo e o texto corrido -->
+    <!-- Bangers pros titulos (da cara de gibi) e Archivo pro texto normal -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
           rel="stylesheet">
 
+    <!-- o @{...} do Thymeleaf ajeita o caminho do css sozinho -->
     <link rel="stylesheet" th:href="@{/css/estilo.css}">
 </head>
 <body>
 
-<!-- Inclui o menu de navegacao (feito pela Pessoa B) -->
+<!-- puxa o menu que fica no arquivo fragments/header.html -->
 <div th:replace="~{fragments/header :: menu}"></div>
 
 <main class="pagina">
 
     <h1>Buscar Super-heroi</h1>
 
-    <!-- Formulario de busca: metodo GET manda o "nome" na propria URL (?nome=batman) -->
+    <!-- Usei GET pra o nome aparecer na URL (?nome=batman).
+         Assim da pra recarregar a pagina e a busca continua la -->
     <form class="busca" th:action="@{/herois/buscar}" method="get">
-        <!-- th:value mantem o texto digitado, mesmo depois de recarregar a pagina -->
+        <!-- o th:value devolve pro campo o que a pessoa tinha digitado -->
         <input class="busca__campo" type="text" name="nome" th:value="${nome}"
                placeholder="Digite o nome do heroi..." required>
         <button class="botao botao--rosa" type="submit">Buscar</button>
     </form>
 
-    <!-- Primeira visita: ainda nao houve busca nenhuma -->
+    <!-- ainda nao buscou nada, entao mostra uma dica -->
     <div class="balao" th:if="${nome == null or nome.isBlank()}">
         <strong>Comece por aqui</strong>
         Digite o nome de um heroi para ver os poderes dele e adicionar ao seu elenco.
     </div>
 
-    <!-- Mostra essa mensagem SOMENTE se ja foi feita uma busca e ela nao trouxe nenhum resultado -->
+    <!-- so aparece se a pessoa buscou alguma coisa e a lista voltou vazia -->
     <div class="balao" th:if="${resultados != null and #lists.isEmpty(resultados) and nome != null and !nome.isBlank()}">
         <strong>Nenhum heroi com esse nome</strong>
         Confira a grafia ou tente so parte do nome, como "man" ou "spider".
     </div>
 
     <div class="cards">
-        <!-- th:each repete esse bloco de <div class="card"> para CADA heroi da lista "resultados" -->
+        <!-- o th:each repete esse card pra cada heroi que veio da API.
+             Dentro dele, "h" e o heroi da vez -->
         <div class="card" th:each="h : ${resultados}">
 
-            <!-- Selo de alinhamento: muda de cor conforme o heroi seja bom ou mau -->
+            <!-- o selo troca de cor dependendo se o heroi e bom ou mau -->
             <span class="selo"
                   th:classappend="${h.biography.alignment == 'bad'} ? 'selo--vilao' : 'selo--bom'"
                   th:text="${h.biography.alignment == 'bad'} ? 'Vilao' : 'Heroi'">Heroi</span>
 
-            <!-- th:src / th:text / th:alt pegam o valor direto do objeto HeroApiDTO (variavel "h") -->
             <img class="card__foto" th:src="${h.images.md}" alt="" th:alt="${h.name}">
 
             <h2 class="card__nome" th:text="${h.name}">Nome</h2>
             <p class="card__editora" th:text="${h.biography.publisher}">Publisher</p>
 
-            <!-- Cada <li> carrega o valor da stat em uma variavel CSS (--valor).
-                 O CSS usa esse numero pra desenhar a barra preenchida. -->
+            <!-- Cada li manda o valor do poder pro CSS atraves da variavel --valor.
+                 O CSS usa esse numero pra preencher a barrinha na proporcao certa -->
             <ul class="stats">
                 <li th:style="'--valor:' + ${h.powerstats.intelligence}">
                     Inteligencia <span class="stats__valor" th:text="${h.powerstats.intelligence}"></span>
@@ -80,8 +82,9 @@
                 </li>
             </ul>
 
-            <!-- Formulario ESCONDIDO (so tem inputs "hidden") que manda TODOS os dados
-                 do heroi pro metodo salvar() do BuscaController quando o botao e clicado -->
+            <!-- Esse form so tem campos escondidos. Quando clica no botao, ele
+                 manda os dados do heroi por POST pro metodo salvar() do controller.
+                 Os "name" tem que ser iguais aos atributos da classe Heroi -->
             <form th:action="@{/herois/salvar}" method="post">
                 <input type="hidden" name="apiId"        th:value="${h.id}">
                 <input type="hidden" name="nome"         th:value="${h.name}">

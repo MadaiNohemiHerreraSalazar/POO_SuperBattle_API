@@ -1,23 +1,19 @@
-/* ==========================================================================
-   SUPER BATTLE API - Folha de estilo unica
-   Estetica: pop comic art / gibi de super-heroi antigo
-   Paleta: azul, rosa, amarelo e roxo sobre tinta preta e papel envelhecido
-   ========================================================================== */
+/* A ideia visual foi gibi antigo de super-heroi:
+   cores fortes, contorno preto grosso e sombra dura sem borrar */
 
-/* --------------------------------------------------------------------------
-   1. TOKENS (variaveis de cor, sombra e fonte usadas no arquivo inteiro)
-   -------------------------------------------------------------------------- */
+/* Variaveis: deixei as cores e o contorno aqui em cima pra mudar tudo
+   de uma vez so se quiser trocar a paleta */
 :root {
     --azul:    #00b3ee;
     --rosa:    #ff2e88;
     --amarelo: #ffd400;
     --roxo:    #8b3fd1;
 
-    --tinta:   #10101c;   /* o "preto" do traco de nanquim */
-    --papel:   #fff6e0;   /* papel de gibi envelhecido */
+    --tinta:   #10101c;   /* preto do contorno */
+    --papel:   #fff6e0;   /* cor de fundo, parece papel velho */
     --branco:  #ffffff;
 
-    /* traco e sombra dura: nada de sombra borrada, gibi tem contorno seco */
+    /* contorno e sombras sem desfoque, que e o que da o jeito de gibi */
     --traco: 4px solid var(--tinta);
     --sombra: 6px 6px 0 var(--tinta);
     --sombra-pequena: 4px 4px 0 var(--tinta);
@@ -26,9 +22,8 @@
     --fonte-texto: "Archivo", "Segoe UI", sans-serif;
 }
 
-/* --------------------------------------------------------------------------
-   2. RESET BASICO
-   -------------------------------------------------------------------------- */
+/* Reset: tira as margens padrao do navegador e faz o padding
+   entrar na conta da largura (box-sizing) */
 * {
     margin: 0;
     padding: 0;
@@ -40,21 +35,18 @@ body {
     color: var(--tinta);
     background-color: var(--papel);
 
-    /* Fundo em duas camadas:
-       1) a trama de meio-tom (aquelas bolinhas impressas do gibi)
-       2) o papel amarelado por baixo                                        */
+    /* fundo com duas camadas: bolinhas (como a impressao dos gibis)
+       por cima de um degrade amarelado */
     background-image:
         radial-gradient(var(--tinta) 1.2px, transparent 1.3px),
         radial-gradient(circle at 50% 0%, #ffe9a8 0%, var(--papel) 60%);
     background-size: 14px 14px, 100% 100%;
-
-    /* deixa as bolinhas bem discretas pra nao brigar com o conteudo */
     background-blend-mode: normal;
     padding-bottom: 60px;
 }
 
-/* a trama de bolinhas fica forte demais em opacidade cheia,
-   entao a suavizamos com uma camada clara por cima do body */
+/* as bolinhas ficaram fortes demais, entao coloquei uma camada clara
+   por cima pra clarear. O pointer-events: none deixa clicar "atraves" dela */
 body::before {
     content: "";
     position: fixed;
@@ -74,7 +66,7 @@ a {
     text-decoration: none;
 }
 
-/* Acessibilidade: qualquer coisa navegada pelo teclado ganha um contorno visivel */
+/* contorno roxo pra quem navega com Tab saber onde esta */
 a:focus-visible,
 button:focus-visible,
 input:focus-visible,
@@ -83,9 +75,8 @@ select:focus-visible {
     outline-offset: 3px;
 }
 
-/* --------------------------------------------------------------------------
-   3. MENU / CABECALHO (usado pelo fragment header.html)
-   -------------------------------------------------------------------------- */
+/* ---------- MENU ---------- */
+
 .menu {
     background: var(--tinta);
     border-bottom: 6px solid var(--amarelo);
@@ -104,8 +95,8 @@ select:focus-visible {
     letter-spacing: 1.5px;
     color: var(--amarelo);
 
-    /* sombra colorida deslocada = efeito de impressao fora de registro,
-       classico dos gibis antigos */
+    /* duas sombras de cores diferentes lado a lado, imita
+       impressao desalinhada */
     text-shadow: 3px 3px 0 var(--rosa), 6px 6px 0 var(--azul);
 }
 
@@ -131,7 +122,7 @@ select:focus-visible {
     transition: transform .12s, background-color .12s;
 }
 
-/* cada link inclinado pra um lado, pra parecer adesivo colado na pagina */
+/* os links pares inclinam pro outro lado, parecem adesivos colados */
 .menu__links li:nth-child(even) .menu__link { transform: rotate(1.5deg); }
 
 .menu__link:hover {
@@ -139,18 +130,19 @@ select:focus-visible {
     transform: rotate(0deg) translate(-2px, -2px);
 }
 
-/* --------------------------------------------------------------------------
-   4. ESTRUTURA DA PAGINA
-   -------------------------------------------------------------------------- */
+/* ---------- ESTRUTURA GERAL ---------- */
+
+/* limita a largura do conteudo e centraliza na tela */
 .pagina {
     max-width: 1100px;
     margin: 0 auto;
     padding: 36px 20px 0;
 }
 
-/* Titulo grande da tela. O <h1> vira o "letreiro" do gibi. */
 h1 {
     font-family: var(--fonte-titulo);
+    /* clamp = o tamanho cresce com a tela, mas nunca passa de 4.2rem
+       nem fica menor que 2.4rem */
     font-size: clamp(2.4rem, 7vw, 4.2rem);
     line-height: 1;
     letter-spacing: 2px;
@@ -158,7 +150,7 @@ h1 {
 
     color: var(--amarelo);
     -webkit-text-stroke: 3px var(--tinta);
-    paint-order: stroke fill; /* garante que o contorno fique atras da cor */
+    paint-order: stroke fill; /* sem isso o contorno come parte da letra */
     text-shadow: 5px 5px 0 var(--rosa);
 
     margin-bottom: 28px;
@@ -172,9 +164,8 @@ h2 {
     line-height: 1.1;
 }
 
-/* --------------------------------------------------------------------------
-   5. FORMULARIO DE BUSCA
-   -------------------------------------------------------------------------- */
+/* ---------- BUSCA ---------- */
+
 .busca {
     display: flex;
     gap: 14px;
@@ -187,7 +178,7 @@ h2 {
     padding: 20px;
     margin-bottom: 34px;
 
-    /* raios de explosao saindo do centro do painel de busca */
+    /* raios claros saindo do centro, tipo explosao de quadrinho */
     background-image: repeating-conic-gradient(
         from 0deg at 50% 50%,
         rgba(255, 255, 255, .22) 0deg 6deg,
@@ -214,9 +205,11 @@ h2 {
     font-weight: 500;
 }
 
-/* --------------------------------------------------------------------------
-   6. BOTOES
-   -------------------------------------------------------------------------- */
+/* ---------- BOTOES ---------- */
+
+/* O .botao e o estilo base (amarelo). As variacoes de cor (--rosa, --azul...)
+   so trocam o fundo, e o --pequeno diminui o tamanho. No HTML eu combino
+   as duas classes, tipo class="botao botao--rosa" */
 .botao {
     font-family: var(--fonte-titulo);
     font-size: 1.3rem;
@@ -233,7 +226,7 @@ h2 {
     transition: transform .1s, box-shadow .1s;
 }
 
-/* o botao "afunda" quando clicado, como se fosse apertado de verdade */
+/* no hover o botao "sobe", no clique ele "afunda" */
 .botao:hover  { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--tinta); }
 .botao:active { transform: translate(4px, 4px);  box-shadow: 2px 2px 0 var(--tinta); }
 
@@ -249,10 +242,10 @@ h2 {
     box-shadow: var(--sombra-pequena);
 }
 
-/* --------------------------------------------------------------------------
-   7. MENSAGENS (nenhum resultado, primeira visita, avisos)
-   Formato de balao de fala, com o "rabinho" feito em CSS puro.
-   -------------------------------------------------------------------------- */
+/* ---------- BALAO DE MENSAGEM ---------- */
+
+/* Usado nos avisos (primeira visita, sem resultado, elenco vazio).
+   Tem formato de balao de fala de quadrinho */
 .balao {
     position: relative;
     max-width: 620px;
@@ -278,8 +271,9 @@ h2 {
     color: var(--roxo);
 }
 
-/* rabinho do balao: dois triangulos sobrepostos (um preto = borda,
-   um branco por cima = preenchimento) */
+/* O rabinho do balao e feito com triangulos de CSS (truque das bordas).
+   O ::before e o triangulo preto (a borda) e o ::after e um branco menor
+   por cima, que serve de preenchimento */
 .balao::before,
 .balao::after {
     content: "";
@@ -302,9 +296,10 @@ h2 {
     border-color: var(--branco) transparent transparent transparent;
 }
 
-/* --------------------------------------------------------------------------
-   8. GRADE DE CARDS DE HEROI
-   -------------------------------------------------------------------------- */
+/* ---------- CARDS DOS HEROIS ---------- */
+
+/* Grid responsivo: cada card tem no minimo 260px e o navegador decide
+   sozinho quantas colunas cabem na tela */
 .cards {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -312,7 +307,7 @@ h2 {
 }
 
 .card {
-    position: relative;
+    position: relative; /* necessario pro selo se posicionar em cima do card */
     background: var(--branco);
     border: var(--traco);
     box-shadow: var(--sombra);
@@ -323,7 +318,7 @@ h2 {
     gap: 10px;
 }
 
-/* alterna a cor do topo de cada card seguindo a paleta, como paginas de gibi */
+/* a cada 4 cards o fundo repete a sequencia de cores, pra nao ficar tudo igual */
 .cards .card:nth-child(4n+1) { background: var(--branco); }
 .cards .card:nth-child(4n+2) { background: #fff0f6; }
 .cards .card:nth-child(4n+3) { background: #eefaff; }
@@ -332,10 +327,10 @@ h2 {
 .card__foto {
     width: 100%;
     aspect-ratio: 1 / 1;
-    object-fit: cover;
+    object-fit: cover; /* corta a imagem pra caber sem esticar */
     border: 3px solid var(--tinta);
 
-    /* meio-tom atras da foto, aparece se a imagem nao carregar */
+    /* fundo colorido com bolinhas, so aparece se a imagem da API nao carregar */
     background-color: var(--amarelo);
     background-image: radial-gradient(var(--rosa) 2px, transparent 2.5px);
     background-size: 10px 10px;
@@ -351,7 +346,7 @@ h2 {
 
 .card__editora {
     display: inline-block;
-    align-self: flex-start;
+    align-self: flex-start; /* a etiqueta fica do tamanho do texto, nao estica */
     font-size: .8rem;
     font-weight: 700;
     text-transform: uppercase;
@@ -363,10 +358,10 @@ h2 {
     padding: 3px 10px;
 }
 
-/* --------------------------------------------------------------------------
-   9. BARRAS DE PODER (powerstats)
-   Usa a propriedade --valor (0 a 100) escrita no proprio HTML via Thymeleaf.
-   -------------------------------------------------------------------------- */
+/* ---------- BARRAS DE PODER ---------- */
+
+/* Cada <li> recebe no HTML uma variavel --valor com o numero do poder (0 a 100).
+   Aqui o CSS usa esse numero pra pintar a barra proporcional */
 .stats {
     list-style: none;
     display: flex;
@@ -375,6 +370,7 @@ h2 {
     margin-top: 2px;
 }
 
+/* grid de 3 colunas: nome do poder | barra | numero */
 .stats li {
     display: grid;
     grid-template-columns: 92px 1fr 34px;
@@ -387,7 +383,9 @@ h2 {
     letter-spacing: .4px;
 }
 
-/* a trilha da barra */
+/* A barra e um pseudo-elemento (::after), entao nao precisei criar tag nenhuma.
+   O degrade pinta a cor ate X% (o valor do poder) e deixa o resto transparente.
+   Se faltar o --valor, usa 0; se faltar a cor, usa azul */
 .stats li::after {
     content: "";
     grid-column: 2;
@@ -397,7 +395,6 @@ h2 {
     border: 2px solid var(--tinta);
     background: var(--branco);
 
-    /* a barra colorida por dentro: um gradiente que para no valor da stat */
     background-image: linear-gradient(
         to right,
         var(--cor-stat, var(--azul)) calc(var(--valor, 0) * 1%),
@@ -405,7 +402,6 @@ h2 {
     );
 }
 
-/* o numero da stat fica na terceira coluna */
 .stats .stats__valor {
     grid-column: 3;
     text-align: right;
@@ -414,7 +410,7 @@ h2 {
     letter-spacing: .5px;
 }
 
-/* cada atributo tem sua cor, seguindo a paleta */
+/* cor de cada barra, na ordem em que aparecem no HTML */
 .stats li:nth-child(1) { --cor-stat: var(--roxo); }
 .stats li:nth-child(2) { --cor-stat: var(--rosa); }
 .stats li:nth-child(3) { --cor-stat: var(--azul); }
@@ -422,9 +418,9 @@ h2 {
 .stats li:nth-child(5) { --cor-stat: var(--roxo); }
 .stats li:nth-child(6) { --cor-stat: var(--rosa); }
 
-/* --------------------------------------------------------------------------
-   10. SELO DE ALINHAMENTO (heroi / vilao)
-   -------------------------------------------------------------------------- */
+/* ---------- SELO HEROI / VILAO ---------- */
+
+/* fica "pendurado" no canto de cima do card (por isso o position: absolute) */
 .selo {
     position: absolute;
     top: -14px;
@@ -442,12 +438,14 @@ h2 {
     box-shadow: var(--sombra-pequena);
 }
 
+/* o Thymeleaf adiciona uma dessas duas classes conforme o alinhamento */
 .selo--vilao { background: var(--rosa); color: var(--branco); }
 .selo--bom   { background: var(--azul); }
 
-/* --------------------------------------------------------------------------
-   11. TELA DE LUTA / COMPARACAO
-   -------------------------------------------------------------------------- */
+/* ---------- TELA DE DUELO ---------- */
+
+/* tres colunas: lutador | VS | lutador. O "auto" do meio ocupa so o
+   espaco do VS e as laterais dividem o resto igualmente */
 .arena {
     display: grid;
     grid-template-columns: 1fr auto 1fr;
@@ -456,7 +454,8 @@ h2 {
     margin-bottom: 34px;
 }
 
-/* o "VS" no meio: uma estrela de explosao recortada com clip-path */
+/* a estrela do VS e um quadrado recortado com clip-path, onde cada
+   par de numeros e um ponto da estrela */
 .vs {
     display: grid;
     place-items: center;
@@ -476,7 +475,6 @@ h2 {
     color: var(--tinta);
 }
 
-/* o lutador da esquerda é rosa, o da direita azul: leitura instantanea */
 .lutador {
     border: var(--traco);
     box-shadow: var(--sombra);
@@ -484,6 +482,8 @@ h2 {
     background: var(--branco);
 }
 
+/* o da esquerda tem fundo rosinha e o da direita azulado, combina com
+   "canto rosa" e "canto azul" do formulario */
 .lutador--a { border-color: var(--tinta); background: #fff0f6; }
 .lutador--b { border-color: var(--tinta); background: #eefaff; }
 
@@ -502,7 +502,7 @@ h2 {
     margin-top: 10px;
 }
 
-/* Placar atributo por atributo */
+/* tabela do placar */
 .placar {
     width: 100%;
     border-collapse: collapse;
@@ -528,16 +528,17 @@ h2 {
     color: var(--branco);
 }
 
+/* linhas alternadas com cor diferente pra facilitar a leitura */
 .placar tbody tr:nth-child(even) { background: #fff8de; }
 
-/* a celula do lado que venceu aquele atributo fica destacada */
+/* classe colocada pelo Thymeleaf na celula de quem ganhou aquele atributo */
 .placar .venceu {
     background: var(--amarelo);
     font-family: var(--fonte-titulo);
     font-size: 1.25rem;
 }
 
-/* Faixa do vencedor: o momento mais barulhento da pagina inteira */
+/* faixa com o resultado, queria que fosse a parte mais chamativa da tela */
 .vencedor {
     text-align: center;
     background: var(--rosa);
@@ -572,9 +573,8 @@ h2 {
     margin-top: 6px;
 }
 
-/* --------------------------------------------------------------------------
-   12. FORMULARIOS DE SELECAO E EDICAO
-   -------------------------------------------------------------------------- */
+/* ---------- FORMULARIOS (editar e escolher lutadores) ---------- */
+
 .painel {
     background: var(--roxo);
     border: var(--traco);
@@ -592,6 +592,8 @@ h2 {
     text-align: center;
 }
 
+/* os campos se organizam sozinhos em colunas de no minimo 220px,
+   e no celular viram uma coluna so */
 .campos {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -622,11 +624,11 @@ h2 {
     background: var(--branco);
 }
 
+/* usado no botao "Lutar", pra ele ficar alinhado embaixo dos selects */
 .campo--acao { justify-content: flex-end; }
 
-/* --------------------------------------------------------------------------
-   13. TABELA DE HEROIS SALVOS
-   -------------------------------------------------------------------------- */
+/* ---------- TABELA DO ELENCO ---------- */
+
 .tabela {
     width: 100%;
     border-collapse: collapse;
@@ -659,17 +661,17 @@ h2 {
     border: 3px solid var(--tinta);
 }
 
+/* deixa os botoes Editar e Excluir lado a lado */
 .tabela__acoes {
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
 }
 
-/* --------------------------------------------------------------------------
-   14. RESPONSIVO
-   -------------------------------------------------------------------------- */
+/* ---------- CELULAR ---------- */
+
 @media (max-width: 760px) {
-    /* na arena, os lutadores empilham e o VS entra no meio deles */
+    /* a arena vira uma coluna so, com um lutador embaixo do outro */
     .arena {
         grid-template-columns: 1fr;
         justify-items: center;
@@ -684,16 +686,15 @@ h2 {
     .menu { justify-content: center; }
     .menu__marca { font-size: 1.6rem; }
 
-    /* a tabela ganha rolagem lateral em vez de espremer as colunas */
+    /* as tabelas mantem uma largura minima e a div .rolagem deixa
+       arrastar pro lado, em vez de espremer as colunas */
     .rolagem { overflow-x: auto; }
     .tabela { min-width: 620px; }
     .placar { min-width: 520px; }
 }
 
-/* --------------------------------------------------------------------------
-   15. MOVIMENTO REDUZIDO
-   Se a pessoa configurou o sistema pra evitar animacoes, desligamos tudo.
-   -------------------------------------------------------------------------- */
+/* se a pessoa deixou o sistema configurado pra reduzir animacao,
+   a gente desliga as transicoes */
 @media (prefers-reduced-motion: reduce) {
     * {
         transition: none !important;

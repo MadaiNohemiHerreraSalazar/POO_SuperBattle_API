@@ -1,21 +1,23 @@
 <!DOCTYPE html>
 <html lang="pt-br" xmlns:th="http://www.thymeleaf.org">
 <body>
- 
-<!-- th:fragment="menu" -> esse pedaco pode ser chamado de qualquer pagina
-     com <div th:replace="~{fragments/header :: menu}"></div> -->
+
+<!-- Esse arquivo so existe pra guardar o menu, assim eu escrevo ele uma vez
+     e todas as paginas reaproveitam com:
+     <div th:replace="~{fragments/header :: menu}"></div>
+     O th:fragment="menu" abaixo e o nome que as outras paginas chamam -->
 <nav class="menu" th:fragment="menu">
- 
+
     <a class="menu__marca" th:href="@{/herois}">Super Battle</a>
- 
+
+    <!-- um link pra cada tela: busca, lista e luta -->
     <ul class="menu__links">
         <li><a class="menu__link" th:href="@{/herois/buscar}">Buscar</a></li>
         <li><a class="menu__link" th:href="@{/herois}">Meu elenco</a></li>
         <li><a class="menu__link" th:href="@{/herois/luta}">Duelo</a></li>
     </ul>
- 
+
 </nav>
- 
+
 </body>
 </html>
- 

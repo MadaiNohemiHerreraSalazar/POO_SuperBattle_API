@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Duelo</title>
 
+    <!-- mesmas fontes das outras paginas -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
@@ -20,14 +21,15 @@
 
     <h1>Duelo de poderes</h1>
 
-    <!-- Precisa de pelo menos dois herois salvos pra ter duelo -->
+    <!-- sem pelo menos 2 herois salvos nao tem como lutar, entao avisa -->
     <div class="balao" th:if="${herois == null or #lists.size(herois) < 2}">
         <strong>Faltam lutadores</strong>
         Adicione pelo menos dois herois ao elenco para montar um duelo.
     </div>
 
-    <!-- Escolha dos dois lutadores. Os <select> mandam os ids pro controller,
-         que busca os dois no banco e devolve heroi1, heroi2 e vencedor. -->
+    <!-- Formulario de escolha. Os dois selects mandam os ids (id1 e id2) pelo GET
+         e o controller procura os dois no banco e calcula o vencedor.
+         Se nao tem herois suficientes, o form nem aparece (th:unless) -->
     <form th:action="@{/herois/luta}" method="get"
           th:unless="${herois == null or #lists.size(herois) < 2}">
         <div class="painel">
@@ -37,6 +39,8 @@
                     <label for="id1">Canto rosa</label>
                     <select id="id1" name="id1" required>
                         <option value="">Escolher heroi</option>
+                        <!-- th:selected deixa marcado o heroi que ja tinha sido escolhido,
+                             pra nao perder a selecao depois da luta -->
                         <option th:each="h : ${herois}"
                                 th:value="${h.id}"
                                 th:text="${h.nome}"
@@ -60,10 +64,10 @@
         </div>
     </form>
 
-    <!-- Daqui pra baixo, tudo so aparece quando os dois herois ja foram escolhidos -->
+    <!-- tudo daqui pra baixo so aparece depois que os dois lutadores foram escolhidos -->
     <div th:if="${heroi1 != null and heroi2 != null}">
 
-        <!-- A arena: os dois lutadores frente a frente com a estrela de VS no meio -->
+        <!-- arena: um lutador de cada lado e o VS no meio -->
         <div class="arena">
             <div class="lutador lutador--a">
                 <img class="lutador__foto" th:src="${heroi1.imagemUrl}" alt="" th:alt="${heroi1.nome}">
@@ -78,8 +82,8 @@
             </div>
         </div>
 
-        <!-- Faixa do vencedor. O controller manda o objeto "vencedor";
-             se os dois empatarem, ele pode vir nulo e mostramos o empate. -->
+        <!-- Resultado. O "vencedor" vem do controller e fica nulo quando da empate,
+             entao tem um bloco pra cada situacao -->
         <div class="vencedor">
             <p class="vencedor__grito" th:if="${vencedor != null}">Kapow!</p>
             <p class="vencedor__nome" th:if="${vencedor != null}"
@@ -89,8 +93,9 @@
             <p class="vencedor__nome" th:if="${vencedor == null}">Ninguem levou vantagem</p>
         </div>
 
-        <!-- Placar atributo por atributo.
-             A classe "venceu" pinta de amarelo a celula do lado que ganhou aquela linha. -->
+        <!-- Placar atributo por atributo. Em cada linha o th:classappend compara os
+             dois valores e coloca a classe "venceu" (fundo amarelo) em quem tem o maior.
+             Se der igual, nenhum dos dois ganha destaque -->
         <div class="rolagem">
             <table class="placar">
                 <thead>

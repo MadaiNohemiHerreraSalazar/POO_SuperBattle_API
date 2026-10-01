@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meu elenco</title>
 
+    <!-- mesmas fontes das outras paginas -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Archivo:wght@500;700;800&display=swap"
@@ -20,13 +21,14 @@
 
     <h1>Meu elenco</h1>
 
-    <!-- Elenco vazio: em vez de uma tabela sem linhas, um convite pra buscar -->
+    <!-- se nao tem nenhum heroi salvo, mostra um aviso no lugar da tabela vazia -->
     <div class="balao" th:if="${#lists.isEmpty(herois)}">
         <strong>Seu elenco esta vazio</strong>
         Busque um heroi e clique em "Adicionar ao elenco" pra ele aparecer aqui.
     </div>
 
-    <!-- A div .rolagem faz a tabela deslizar de lado no celular em vez de espremer -->
+    <!-- th:unless e o contrario do th:if: so mostra a tabela se a lista NAO estiver vazia.
+         A div .rolagem existe pra tabela rolar pro lado no celular em vez de ficar apertada -->
     <div class="rolagem" th:unless="${#lists.isEmpty(herois)}">
         <table class="tabela">
             <thead>
@@ -42,7 +44,9 @@
                 </tr>
             </thead>
             <tbody>
-                <!-- Uma linha pra cada heroi salvo no banco -->
+                <!-- uma linha pra cada heroi que veio do banco.
+                     Os textos dentro das tags (Nome, Editora...) so servem de exemplo
+                     quando abre o html direto no navegador, o Thymeleaf troca na hora de rodar -->
                 <tr th:each="h : ${herois}">
                     <td><img class="tabela__miniatura" th:src="${h.imagemUrl}" alt="" th:alt="${h.nome}"></td>
                     <td th:text="${h.nome}">Nome</td>
@@ -53,11 +57,12 @@
                     <td th:text="${h.combate}">0</td>
                     <td>
                         <div class="tabela__acoes">
+                            <!-- o id do heroi vai no meio da URL (/herois/editar/3, por exemplo) -->
                             <a class="botao botao--amarelo botao--pequeno"
                                th:href="@{/herois/editar/{id}(id=${h.id})}">Editar</a>
 
-                            <!-- Excluir e POST porque muda dados no banco.
-                                 O onclick pede confirmacao antes de apagar de vez. -->
+                            <!-- Excluir e um form POST porque altera o banco (um link GET nao seria seguro pra isso).
+                                 O confirm() pergunta antes, pra ninguem apagar sem querer -->
                             <form th:action="@{/herois/deletar/{id}(id=${h.id})}" method="post"
                                   onsubmit="return confirm('Remover esse heroi do elenco?');">
                                 <button class="botao botao--rosa botao--pequeno" type="submit">Excluir</button>
