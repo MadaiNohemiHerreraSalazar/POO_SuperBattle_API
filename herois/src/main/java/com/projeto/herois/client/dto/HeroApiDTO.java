@@ -2,20 +2,9 @@ package com.projeto.herois.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// Essa e a classe "raiz" (a principal): representa um heroi INTEIRO, exatamente como ele
+// Essa e a classe pricipal: representa um heroi INTEIRO, exatamente como ele
 // vem da Superhero API. Ela "contem" as outras 3 classes DTO que criamos.
-//
-// Exemplo real (resumido) do JSON de um heroi:
-// {
-//   "id": 70,
-//   "name": "Batman",
-//   "powerstats": { ... },
-//   "biography": { ... },
-//   "images": { ... }
-// }
-//
-// O Jackson (biblioteca que o Spring ja usa por baixo dos panos) converte
-// esse JSON automaticamente para um objeto HeroApiDTO em Java.
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HeroApiDTO {
 

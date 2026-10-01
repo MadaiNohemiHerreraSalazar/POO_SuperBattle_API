@@ -15,15 +15,11 @@ import java.util.List;
 
 // @Controller = essa classe responde por URLs e devolve PAGINAS HTML (Thymeleaf).
 @Controller
-// Todas as rotas daqui comecam com "/herois"
 @RequestMapping("/herois")
 public class HeroiController {
+  
+    private final HeroiRepository heroiRepository; //  Repositorio, que conversa com o banco de dados.
 
-    // Unica dependencia: o repositorio, que conversa com o banco de dados.
-    // Nao precisamos do HeroApiClient aqui porque essa tela so mexe com o que ja foi salvo.
-    private final HeroiRepository heroiRepository;
-
-    // O Spring entrega o repositorio pronto aqui no construtor (injecao de dependencia)
     public HeroiController(HeroiRepository heroiRepository) {
         this.heroiRepository = heroiRepository;
     }
@@ -31,32 +27,26 @@ public class HeroiController {
     // ======================================================================
     // LISTAGEM - GET /herois
     // E pra ca que o BuscaController redireciona depois de salvar um heroi.
-    // ======================================================================
+
     @GetMapping
     public String listar(Model model) {
-        // findAll() ja devolve todos os registros da tabela "herois"
         model.addAttribute("herois", heroiRepository.findAll());
-        return "lista"; // renderiza templates/lista.html
+        return "lista"; 
     }
 
     // ======================================================================
     // EDICAO - GET /herois/editar/5
     // @PathVariable pega o numero que veio na propria URL e joga na variavel "id"
-    // ======================================================================
+
     @GetMapping("/editar/{id}")
     public String editar(@PathVariable Long id, Model model) {
-        // findById devolve um Optional (pode ou nao existir aquele id no banco).
-        // orElse(null) simplifica: se nao achar, vira null.
+    
         Heroi heroi = heroiRepository.findById(id).orElse(null);
 
-        // Se alguem digitar um id que nao existe, mandamos de volta pra listagem
-        // em vez de deixar a pagina quebrar tentando ler campos de um objeto nulo.
         if (heroi == null) {
             return "redirect:/herois";
         }
 
-        // O editar.html usa th:object="${heroi}", entao o nome do atributo
-        // precisa ser exatamente "heroi"
         model.addAttribute("heroi", heroi);
         return "editar";
     }
@@ -66,7 +56,7 @@ public class HeroiController {
     // @ModelAttribute monta um objeto Heroi juntando automaticamente os campos
     // do formulario que tem o mesmo nome dos atributos da classe (nome, forca, etc).
     // Como o id vem junto (no input hidden), o save() faz UPDATE em vez de INSERT.
-    // ======================================================================
+    
     @PostMapping("/atualizar")
     public String atualizar(@ModelAttribute Heroi heroi) {
         heroiRepository.save(heroi);
@@ -76,7 +66,7 @@ public class HeroiController {
     // ======================================================================
     // EXCLUSAO - POST /herois/deletar/5
     // E POST (e nao GET) porque a acao muda dados no banco.
-    // ======================================================================
+   
     @PostMapping("/deletar/{id}")
     public String deletar(@PathVariable Long id) {
         heroiRepository.deleteById(id);
@@ -87,7 +77,7 @@ public class HeroiController {
     // DUELO - GET /herois/luta  (e tambem /herois/luta?id1=1&id2=2)
     // Os ids sao required=false porque a primeira vez que a pessoa abre a tela
     // ela ainda nao escolheu ninguem: aparece so o formulario de selecao.
-    // ======================================================================
+   
     @GetMapping("/luta")
     public String luta(@RequestParam(required = false) Long id1,
                        @RequestParam(required = false) Long id2,

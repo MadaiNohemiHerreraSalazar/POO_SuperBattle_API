@@ -11,20 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
 
-// @Controller diz ao Spring que essa classe vai responder por rotas (URLs) do site
-// e retornar PAGINAS HTML (via Thymeleaf), diferente de @RestController que retorna JSON puro.
+// @Controller: essa classe responde por URLs e devolve PAGINAS HTML (Thymeleaf).
 @Controller
-// Todas as rotas dessa classe comecam com "/herois"
 @RequestMapping("/herois")
 public class BuscaController {
 
-    // Dependencias que essa classe precisa pra funcionar:
-    // - heroApiClient: pra buscar dados na API externa
-    // - heroiRepository: pra salvar o heroi escolhido no nosso banco
-    private final HeroApiClient heroApiClient;
-    private final HeroiRepository heroiRepository;
+    private final HeroApiClient heroApiClient; // pra buscar dados na API externa
+    private final HeroiRepository heroiRepository; //  pra salvar o heroi escolhido no nosso banco
 
-    // O Spring "injeta" essas duas dependencias automaticamente aqui no construtor
     public BuscaController(HeroApiClient heroApiClient, HeroiRepository heroiRepository) {
         this.heroApiClient = heroApiClient;
         this.heroiRepository = heroiRepository;
@@ -37,16 +31,14 @@ public class BuscaController {
     public String buscar(@RequestParam(required = false) String nome, Model model) {
         List<HeroApiDTO> resultados = new ArrayList<>();
 
-        // So faz a busca na API se o usuario realmente digitou algo
         if (nome != null && !nome.isBlank()) {
             resultados = heroApiClient.buscarPorNome(nome);
         }
 
-        // model.addAttribute manda esses dados para o HTML (busca.html) poder usar
+        // model.addAttribute manda esses dados para o HTML
         model.addAttribute("resultados", resultados);
-        model.addAttribute("nome", nome); // pra manter o texto digitado no campo apos buscar
+        model.addAttribute("nome", nome); 
 
-        // Retorna o nome do arquivo HTML (sem ".html") que vai ser renderizado
         return "busca";
     }
 
@@ -65,14 +57,12 @@ public class BuscaController {
                           @RequestParam int poder,
                           @RequestParam int combate) {
 
-        // Monta um objeto Heroi (Entity) com os dados recebidos do formulario
+      
         Heroi heroi = new Heroi(apiId, nome, imagemUrl, publisher, alinhamento,
                 inteligencia, forca, velocidade, durabilidade, poder, combate);
 
-        // Salva no banco de dados (o JPA cuida do INSERT automaticamente)
         heroiRepository.save(heroi);
 
-        // Depois de salvar, redireciona o usuario pra tela de listagem (do Pessoa B)
         return "redirect:/herois";
     }
 }

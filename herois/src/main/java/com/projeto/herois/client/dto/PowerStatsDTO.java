@@ -2,14 +2,7 @@ package com.projeto.herois.client.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-// DTO = "Data Transfer Object": uma classe que serve so pra RECEBER os dados
-// que vem prontos da API externa, no formato JSON.
-//
-// Essa classe representa o objeto "powerstats" dentro do JSON de cada heroi. Exemplo real:
-// "powerstats": { "intelligence": 100, "strength": 26, "speed": 27, "durability": 50, "power": 47, "combat": 100 }
-
-// @JsonIgnoreProperties(ignoreUnknown = true) evita erro caso a API mande algum campo
-// extra que a gente nao mapeou aqui (o Jackson so ignora, em vez de quebrar a aplicacao)
+// Essa classe representa o objeto "powerstats" dentro do JSON de cada heroi.
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PowerStatsDTO {
@@ -21,7 +14,6 @@ public class PowerStatsDTO {
     private int power;
     private int combat;
 
-    // Getters e setters
     public int getIntelligence() {
         return intelligence;
     }
